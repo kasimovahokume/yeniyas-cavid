@@ -1,0 +1,1185 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Archive | For Murrebe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg: #0b0b0b;
+            --accent: #ff7eb9; /* Yumşaq çəhrayı/bənövşəyi */
+            --cyan: #70e1ff;
+            --text: #f0f0f0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            text-align: center;
+        }
+
+        /* --- QAT-QAT TORT ANİMASİYASI --- */
+        #cake-world {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .layer {
+            background: linear-gradient(45deg, #2c2c2c, #444);
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            margin-top: -5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            transform: translateY(-1000px);
+            animation: dropLayer 0.8s forwards ease-out;
+        }
+
+        .layer1 { width: 160px; height: 50px; animation-delay: 0.2s; } /* Alt qat */
+        .layer2 { width: 120px; height: 40px; animation-delay: 0.6s; } /* Orta qat */
+        .layer3 { width: 80px; height: 35px; animation-delay: 1s; }    /* Üst qat */
+
+        @keyframes dropLayer {
+            to { transform: translateY(0); }
+        }
+
+        /* ŞAMLAR */
+        .candles-row {
+            position: absolute;
+            top: -25px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .candle {
+            width: 8px;
+            height: 25px;
+            background: var(--cyan);
+            position: relative;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+
+        .flame {
+            width: 10px; height: 15px;
+            background: #ffcc00;
+            border-radius: 50%;
+            position: absolute;
+            top: -18px; left: -1px;
+            box-shadow: 0 0 10px #ffcc00;
+            animation: flicker 0.2s infinite alternate;
+        }
+
+        .flame.off { display: none; }
+
+        /* TÜSTÜ EFFEKTİ */
+        .smoke {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            width: 10px; height: 10px;
+            background: rgba(255,255,255,0.4);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: riseSmoke 1s forwards;
+            display: none;
+        }
+
+        @keyframes riseSmoke {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-40px) scale(3); opacity: 0; }
+        }
+
+        @keyframes flicker {
+            from { transform: scale(1); } to { transform: scale(1.2); }
+        }
+
+        /* NAVİQASİYA */
+        nav {
+            margin-top: 300px;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text);
+            border: 1px solid rgba(255, 126, 185, 0.3);
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: 0.4s;
+            font-weight: 300;
+        }
+
+        .nav-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 5px 15px rgba(255, 126, 185, 0.4);
+        }
+
+        /* SƏHİFƏLƏR */
+        .page {
+            display: none;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .page.active { display: block; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .message-box {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: var(--cyan);
+            background: rgba(255,255,255,0.03);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            line-height: 1.4;
+        }
+
+        #hbd-banner {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Dancing Script', cursive;
+            font-size: 5rem;
+            color: var(--accent);
+            z-index: 3000;
+            display: none;
+            text-shadow: 0 0 20px rgba(255, 126, 185, 0.8);
+        }
+    </style>
+</head>
+<body>
+
+    <div id="hbd-banner">Ad günün mübarək! ✨</div>
+
+    <div id="cake-world">
+        <div class="layer layer3">
+            <div class="candles-row">
+                <div class="candle" onclick="blow(this)"><div class="flame"></div><div class="smoke"></div></div>
+                <div class="candle" onclick="blow(this)"><div class="flame"></div><div class="smoke"></div></div>
+                <div class="candle" onclick="blow(this)"><div class="flame"></div><div class="smoke"></div></div>
+            </div>
+        </div>
+        <div class="layer layer2"></div>
+        <div class="layer layer1"></div>
+        <p id="instruction" style="font-size: 0.8rem; margin-top: 15px; opacity: 0.7;">Şamları bir-bir söndür...</p>
+    </div>
+
+    <header style="margin-top: 250px;">
+        <h1 style="font-weight: 300; letter-spacing: 5px;">THE MURDER <span style="color: var(--accent);">ARCHIVE</span></h1>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" onclick="showPage('home', this)">Home</button>
+        <button class="nav-btn" onclick="showPage('meymun', this)">Meymun</button>
+        <button class="nav-btn" onclick="showPage('lalos', this)">Lalos</button>
+        <button class="nav-btn" onclick="showPage('heyva', this)">Heyva</button>
+    </nav>
+
+    <section id="home" class="page active">
+        <div class="message-box">Xoş gəldin! Şamları söndür və dostlarının sürprizlərinə bax...</div>
+    </section>
+
+    <section id="meymun" class="page">
+        <h2>File: Meymun</h2>
+        <div class="message-box">
+            "Sənin o gülüşün heç vaxt solmasın. Yaxşı ki varsan, dəli dostum! ❤️"
+        </div>
+        <img src="./project/assets/images/meymun1.jpg" style="width: 80%; border-radius: 15px;">
+    </section>
+
+    <section id="lalos" class="page">
+        <h2>File: Lalos</h2>
+        <div class="message-box">
+            "Happy birthday cenememm! 🫶 Yeni yaşın sənə bol şans gətirsin."
+        </div>
+        <video controls style="width: 80%; border-radius: 15px;">
+            <source src="./project/assets/video/lalos_video.mp4" type="video/mp4">
+        </video>
+    </section>
+
+    <section id="heyva" class="page">
+        <h2>File: Heyva</h2>
+        <div class="message-box">
+            "Toyunda mütləq oynayacağıq! Səni tanıdığım üçün çox şanslıyam. 🎉"
+        </div>
+        <img src="./project/assets/images/heyva1.jpg" style="width: 80%; border-radius: 15px;">
+    </section>
+
+    <script>
+        let extinguishedCount = 0;
+
+        function blow(candleDiv) {
+            const flame = candleDiv.querySelector('.flame');
+            const smoke = candleDiv.querySelector('.smoke');
+
+            if (!flame.classList.contains('off')) {
+                flame.classList.add('off');
+                // Tüstü effekti
+                smoke.style.display = 'block';
+                extinguishedCount++;
+
+                if (extinguishedCount === 3) {
+                    finishRitual();
+                }
+            }
+        }
+
+        function finishRitual() {
+            document.getElementById('instruction').innerText = "System Unlocked!";
+            
+            // Zərlər və Təbrik
+            const banner = document.getElementById('hbd-banner');
+            banner.style.display = 'block';
+
+            // Confetti (Zərlər)
+            var end = Date.now() + (4 * 1000);
+            var colors = ['#ff7eb9', '#70e1ff', '#ffffff'];
+
+            (function frame() {
+                confetti({
+                    particleCount: 3,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: colors
+                });
+                confetti({
+                    particleCount: 3,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: colors
+                });
+
+                if (Date.now() < end) {
+                    requestAnimationFrame(frame);
+                }
+            }());
+
+            setTimeout(() => { 
+                banner.style.display = 'none';
+                document.getElementById('cake-world').style.opacity = '0.3';
+            }, 4000);
+        }
+
+        function showPage(id, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Murder Archive | Classified</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg: #050505;
+            --accent: #d4af37; /* Qızılı rəng */
+            --pink: #ff4d8d;
+            --cyan: #00d4ff;
+            --text: #e0e0e0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            overflow-x: hidden;
+            text-align: center;
+        }
+
+        /* --- QARĞA ANİMASİYASI --- */
+        .crow {
+            position: fixed;
+            width: 50px;
+            z-index: 9999;
+            pointer-events: none;
+            filter: drop-shadow(0 0 5px black);
+            animation: fly 10s linear infinite;
+        }
+
+        @keyframes fly {
+            0% { left: -100px; top: 20%; transform: scaleX(1); }
+            45% { transform: scaleX(1); }
+            50% { left: 110%; top: 50%; transform: scaleX(-1); }
+            95% { transform: scaleX(-1); }
+            100% { left: -100px; top: 20%; transform: scaleX(1); }
+        }
+
+        /* --- QAT-QAT RƏNGLİ TORT --- */
+        #cake-world {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            perspective: 1000px;
+        }
+
+        .layer {
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 15px 15px 5px 5px;
+            margin-bottom: -10px;
+            transform: translateY(-120vh);
+            animation: fall 1s forwards cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+
+        .l1 { width: 220px; height: 70px; background: #4a2c2a; animation-delay: 0.2s; } /* Chocolate */
+        .l2 { width: 170px; height: 60px; background: var(--pink); animation-delay: 0.7s; } /* Strawberry */
+        .l3 { width: 110px; height: 50px; background: #fff5e1; animation-delay: 1.2s; } /* Vanilla */
+
+        @keyframes fall { to { transform: translateY(0); } }
+
+        /* ŞAM VƏ TÜSTÜ */
+        .candle-box {
+            position: absolute;
+            top: -35px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .candle {
+            width: 10px; height: 35px;
+            background: linear-gradient(var(--cyan), var(--accent));
+            border-radius: 5px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .flame {
+            width: 14px; height: 22px;
+            background: radial-gradient(#fff, #ffaa00, transparent);
+            border-radius: 50%;
+            position: absolute; top: -22px; left: -2px;
+            box-shadow: 0 0 15px #ffaa00;
+            animation: flicker 0.1s infinite alternate;
+        }
+        .flame.off { display: none; }
+
+        .smoke {
+            position: absolute; top: -30px; left: 50%;
+            width: 20px; height: 20px; background: rgba(255,255,255,0.3);
+            border-radius: 50%; opacity: 0; pointer-events: none;
+        }
+        .smoke.active { animation: smokeUp 1.5s forwards; }
+
+        @keyframes smokeUp {
+            0% { opacity: 0.8; transform: translate(-50%, 0) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -80px) scale(3); filter: blur(5px); }
+        }
+
+        @keyframes flicker { from { opacity: 0.8; transform: scale(1); } to { opacity: 1; transform: scale(1.1); } }
+
+        /* --- TƏBRİK YAZISI --- */
+        #hbd-banner {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            font-family: 'Playfair Display', serif;
+            font-size: 5rem; color: var(--accent);
+            z-index: 5000; display: none;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.6);
+            pointer-events: none;
+        }
+
+        /* --- NAVİQASİYA --- */
+        nav {
+            margin: 50px 0;
+            display: flex; justify-content: center; gap: 20px;
+        }
+
+        .nav-btn {
+            background: transparent; color: #777; border: none;
+            font-family: 'Playfair Display', serif; font-size: 1.8rem;
+            cursor: pointer; transition: 0.4s;
+        }
+
+        .nav-btn.active { color: var(--accent); text-decoration: underline; }
+
+        /* --- SEKSİYALAR --- */
+        .page { display: none; max-width: 1000px; margin: 0 auto; padding: 40px; animation: fadeIn 1s; }
+        .page.active { display: block; }
+
+        .album-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;
+        }
+
+        .photo-card {
+            background: #111; padding: 10px; border: 1px solid #222;
+            transition: 0.3s;
+        }
+        .photo-card:hover { transform: scale(1.03); border-color: var(--accent); }
+        .photo-card img { width: 100%; height: 300px; object-fit: cover; }
+
+        .video-container video {
+            width: 100%; max-width: 800px; border: 2px solid var(--accent);
+        }
+
+        .message-box {
+            font-family: 'Playfair Display', serif; font-size: 1.5rem;
+            line-height: 1.8; font-style: italic; color: var(--cyan);
+            margin: 40px 0; background: rgba(255,255,255,0.03); padding: 30px;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <img src="https://www.transparentpng.com/download/crow/crow-png-clipart-3.png" class="crow" alt="Crow">
+
+    <div id="hbd-banner">Ad günün mübarək!</div>
+
+    <section id="cake-world">
+        <h1 style="font-family: 'Playfair Display'; font-size: 3rem; margin-bottom: 50px;">The Murder Archive</h1>
+        
+        <div style="position: relative; display: flex; flex-direction: column; align-items: center;">
+            <div class="layer l3">
+                <div class="candle-box">
+                    <div class="candle" onclick="extinguish(this)"><div class="flame"></div><div class="smoke"></div></div>
+                    <div class="candle" onclick="extinguish(this)"><div class="flame"></div><div class="smoke"></div></div>
+                    <div class="candle" onclick="extinguish(this)"><div class="flame"></div><div class="smoke"></div></div>
+                </div>
+            </div>
+            <div class="layer l2"></div>
+            <div class="layer l1"></div>
+        </div>
+
+        <p style="margin-top: 30px; letter-spacing: 3px; font-size: 0.8rem; color: var(--accent);">[ ŞAMLARI SÖNDÜRÜN ]</p>
+    </section>
+
+    <nav>
+        <button class="nav-btn active" onclick="openPage('home', this)">Ana Səhifə</button>
+        <button class="nav-btn" onclick="openPage('album', this)">Foto Albom</button>
+        <button class="nav-btn" onclick="openPage('video', this)">Videolar</button>
+        <button class="nav-btn" onclick="openPage('meymun', this)">Meymun</button>
+    </nav>
+
+    <section id="home" class="page active">
+        <div class="message-box">
+            "Bəzi dostluqlar arxivlərdə gizlənmiş ən dəyərli sənədlər kimidir. Bu gün sənin günündür, Murrebe."
+        </div>
+    </section>
+
+    <section id="album" class="page">
+        <h2 style="color: var(--accent); margin-bottom: 30px;">// XATİRƏLƏR</h2>
+        <div class="album-grid">
+            <div class="photo-card"><img src="./project/assets/images/foto1.jpg" alt="Foto 1"></div>
+            <div class="photo-card"><img src="./project/assets/images/foto2.jpg" alt="Foto 2"></div>
+            <div class="photo-card"><img src="./project/assets/images/foto3.jpg" alt="Foto 3"></div>
+            <div class="photo-card"><img src="./project/assets/images/foto4.jpg" alt="Foto 4"></div>
+        </div>
+    </section>
+
+    <section id="video" class="page">
+        <h2 style="color: var(--accent); margin-bottom: 30px;">// VİDEO ARXİV</h2>
+        <div class="video-container">
+            <video controls>
+                <source src="./project/assets/video/heyva_video.mp4" type="video/mp4">
+            </video>
+        </div>
+    </section>
+
+    <section id="meymun" class="page">
+        <h2 style="color: var(--pink);">FILE: MEYMUN.EXE</h2>
+        <div class="message-box">
+            "Yaxşı ki doğulmusan! Səninlə olan hər dəqiqə maraqlı bir hekayədir. Yeni yaşın sənə uğur gətirsin."
+        </div>
+    </section>
+
+    <script>
+        let extinguished = 0;
+
+        function extinguish(candle) {
+            const flame = candle.querySelector('.flame');
+            const smoke = candle.querySelector('.smoke');
+
+            if (!flame.classList.contains('off')) {
+                flame.classList.add('off');
+                smoke.classList.add('active');
+                extinguished++;
+            }
+
+            if (extinguished === 3) {
+                launchCelebration();
+            }
+        }
+
+        function launchCelebration() {
+            // Yazını göstər
+            const banner = document.getElementById('hbd-banner');
+            banner.style.display = 'block';
+
+            // Atəşfəşanlıq
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+
+            const frame = () => {
+                confetti({
+                    particleCount: 7,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#d4af37', '#ff4d8d', '#00d4ff']
+                });
+                confetti({
+                    particleCount: 7,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#d4af37', '#ff4d8d', '#00d4ff']
+                });
+
+                if (Date.now() < animationEnd) {
+                    requestAnimationFrame(frame);
+                }
+            };
+            frame();
+
+            // Səhifəni avtomatik aşağı sürüşdür
+            setTimeout(() => {
+                banner.style.display = 'none';
+                window.scrollTo({ top: window.innerHeight, behavior: 'smooth' });
+            }, 4000);
+        }
+
+        function openPage(pageId, btn) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            
+            document.getElementById(pageId).classList.add('active');
+            btn.classList.add('active');
+        }
+    </script>
+</body>
+</html>
+
+
+
+<!-- ========================================================================================= -->
+ <!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black Box | Ad Günün Mübarək!</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg-dark: #0a0a0c;
+            --accent-pink: #ff007a;
+            --accent-blue: #00f2ff;
+            --text-light: #ffffff;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Space Grotesk', sans-serif;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #1a1a2e 0%, #0a0a0c 100%);
+        }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+
+        /* QARĞA ANIMASIYASI */
+        .crow-fly {
+            position: fixed;
+            top: 15%;
+            left: -100px;
+            width: 80px;
+            z-index: 1000;
+            pointer-events: none;
+            filter: drop-shadow(0 0 10px rgba(0,0,0,0.5));
+            animation: flyAcross 15s linear infinite;
+        }
+        @keyframes flyAcross {
+            0% { left: -100px; transform: scaleX(1); }
+            45% { transform: scaleX(1); }
+            50% { left: 110%; transform: scaleX(-1); }
+            95% { transform: scaleX(-1); }
+            100% { left: -100px; transform: scaleX(1); }
+        }
+
+        /* HEADER */
+        header {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+        .main-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: clamp(2rem, 8vw, 4.5rem);
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-pink));
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            z-index: 10;
+        }
+
+        /* TORT ANIMASIYASI (YUXARIDAN DÜŞƏN) */
+        .cake-area {
+            position: relative;
+            height: 300px;
+            width: 300px;
+            margin: 40px auto;
+        }
+        .layer {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1e1e24;
+            border: 2px solid #2d2d35;
+            border-radius: 15px;
+            opacity: 0;
+            animation: dropLayer 1s cubic-bezier(0.24, 1.31, 0.58, 1) forwards;
+        }
+        @keyframes dropLayer {
+            0% { transform: translate(-50%, -500px); opacity: 0; }
+            100% { transform: translate(-50%, 0); opacity: 1; }
+        }
+        .layer-1 { width: 250px; height: 80px; bottom: 0; animation-delay: 0.2s; }
+        .layer-2 { width: 180px; height: 70px; bottom: 80px; animation-delay: 0.6s; }
+        .layer-3 { width: 110px; height: 60px; bottom: 150px; animation-delay: 1s; }
+
+        /* ŞAMLAR VƏ TÜSTÜ */
+        .candles {
+            position: absolute;
+            bottom: 210px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            opacity: 0;
+            animation: fadeIn 1s ease forwards 1.5s;
+        }
+        .candle {
+            width: 8px;
+            height: 35px;
+            background: linear-gradient(to top, var(--accent-pink), #ff5ebc);
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+        .flame {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 12px;
+            height: 18px;
+            background: orange;
+            border-radius: 50% 50% 20% 20%;
+            box-shadow: 0 0 10px orange;
+            animation: flicker 0.5s infinite;
+        }
+        @keyframes flicker { 50% { transform: translateX(-50%) scale(1.1); opacity: 0.8; } }
+        
+        .smoke {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: rgba(255,255,255,0.2);
+            filter: blur(8px);
+            border-radius: 50%;
+            animation: smokeRise 1.5s ease-out forwards;
+        }
+        @keyframes smokeRise {
+            to { transform: translate(-50%, -60px) scale(2); opacity: 0; }
+        }
+
+        /* SECTION STYLE */
+        .section-box {
+            background: var(--glass);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 50px;
+            transition: 0.4s;
+        }
+        .section-box:hover { border-color: var(--accent-blue); box-shadow: 0 0 20px rgba(0,242,255,0.1); }
+        h2.title { color: var(--accent-blue); margin-bottom: 30px; font-family: 'Montserrat'; }
+
+        /* GALLERY & VIDEOS */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .item { border-radius: 15px; overflow: hidden; background: #000; height: 300px; border: 1px solid #333; }
+        .item img, .item video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* MUSIC TOGGLE */
+        #music-btn {
+            position: fixed; bottom: 20px; right: 20px; z-index: 2000;
+            background: var(--accent-pink); color: white; border: none;
+            width: 50px; height: 50px; border-radius: 50%; cursor: pointer;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+    <img src="https://i.ibb.co/pW3H90r/raven.png" class="crow-fly" alt="Crow">
+
+    <header>
+        <h1 class="main-title">Mürəbbəm, <br>Ad Günün Mübarək!</h1>
+        
+        <div class="cake-area">
+            <div class="layer layer-1"></div>
+            <div class="layer layer-2"></div>
+            <div class="layer layer-3"></div>
+            <div class="candles">
+                <div class="candle" onclick="extinguish(this)"><div class="flame"></div></div>
+                <div class="candle" onclick="extinguish(this)"><div class="flame"></div></div>
+                <div class="candle" onclick="extinguish(this)"><div class="flame"></div></div>
+                <div class="candle" onclick="extinguish(this)"><div class="flame"></div></div>
+                <div class="candle" onclick="extinguish(this)"><div class="flame"></div></div>
+            </div>
+        </div>
+        <p style="opacity: 0.6;">(Şamları söndür və arzunu tut 🕯️)</p>
+    </header>
+
+    <div class="container">
+        
+        <section class="section-box">
+            <h2 class="title">⏰ Xatirələrimiz</h2>
+            <p style="line-height: 1.8;">
+                <b>2023:</b> Hər şey kollecdə başladı... Bizi tanış edən o illər oldu, amma yaxşı ki də oldu. Səni tanıdığım o gün həyatımın ən gözəl təsadüfü idi. <br><br>
+                <b>2024:</b> Bu il səni daha da çox tanıdım. Birlikdə kursa getdiyimiz o günlər, Lalə ilə bir yerdə keçirdiyimiz anlar... Hamısı çox özəldir. <br><br>
+                <b>2025:</b> Çevrəmiz böyüdü, unudulmaz vaxt keçirdik. O veçeri heç vaxt unutmayacam!
+            </p>
+        </section>
+
+        <section class="section-box">
+            <h2 class="title">📸 Foto Albom</h2>
+            <div class="grid">
+                <div class="item"><img src="./project/assets/images/foto4.jpg" onerror="this.src='https://via.placeholder.com/300x400?text=Foto'"></div>
+                <div class="item"><img src="./project/assets/images/foto5.jpg" onerror="this.src='https://via.placeholder.com/300x400?text=Foto'"></div>
+                <div class="item"><img src="./project/assets/images/foto6.jpg" onerror="this.src='https://via.placeholder.com/300x400?text=Foto'"></div>
+                <div class="item"><img src="./project/assets/images/foto7.jpg" onerror="this.src='https://via.placeholder.com/300x400?text=Foto'"></div>
+            </div>
+        </section>
+
+        <section class="section-box">
+            <h2 class="title">🎥 Xüsusi Videolar</h2>
+            <div class="grid">
+                <div class="item">
+                    <video controls>
+                        <source src="./project/assets/video/document_5370714590554396216.mp4" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-box" style="background: linear-gradient(to right, #1e1e24, #111);">
+            <h2 class="title">✉️ Ürək Sözlərim</h2>
+            <p style="font-style: italic; font-size: 1.2rem;">
+                "Əziz Mürəbbəm, sən həqiqi dostluğun nə olduğunu mənə göstərdin. Səninlə keçən hər an bir hədiyyədir. 
+                Bu yaşın sənə bol xoşbəxtlik gətirsin. Həmişə ulduz kimi parla! ❤️"
+            </p>
+        </section>
+
+    </div>
+
+    <button id="music-btn" onclick="toggleMusic()">🎵</button>
+    <audio id="myAudio" loop>
+        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mp3">
+    </audio>
+
+    <script>
+        // Musiqi
+        const audio = document.getElementById('myAudio');
+        let playing = false;
+        function toggleMusic() {
+            if(!playing) { audio.play(); playing = true; } 
+            else { audio.pause(); playing = false; }
+        }
+
+        // Şam söndürmə
+        let count = 0;
+        function extinguish(candle) {
+            const flame = candle.querySelector('.flame');
+            if(flame) {
+                flame.remove();
+                count++;
+                
+                // Tüstü effekti
+                const smoke = document.createElement('div');
+                smoke.className = 'smoke';
+                candle.appendChild(smoke);
+
+                if(count === 5) {
+                    confetti({
+                        particleCount: 150,
+                        spread: 70,
+                        origin: { y: 0.6 },
+                        colors: ['#ff007a', '#00f2ff', '#ffffff']
+                    });
+                    alert("🥳 Happy Birthday! Arzun çin olsun! 🎉");
+                }
+            }
+        }
+    </script>
+</body>
+</html>
+<!-- ================================================================================================= -->
+ <!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Murder | Personal Files</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg: #050505;
+            --accent: #9d00ff;
+            --cyan: #00d4ff;
+            --text: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            font-family: 'Space Mono', monospace;
+            margin: 0;
+            overflow-x: hidden;
+            text-align: center;
+        }
+
+        /* --- TORT KONTEYNERİ (Yuxarıdan enən) --- */
+        #cake-container {
+            position: fixed;
+            top: -600px; /* Başlanğıcda ekranın xaricində */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            background: rgba(10, 10, 10, 0.95);
+            padding: 40px;
+            border: 2px solid var(--accent);
+            border-top: none;
+            border-radius: 0 0 40px 40px;
+            box-shadow: 0 10px 30px rgba(157, 0, 255, 0.3);
+            transition: top 1.2s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        #cake-container.show { top: 0; }
+
+        .cake-visual {
+            width: 120px;
+            height: 80px;
+            background: #222;
+            margin: 40px auto 20px;
+            position: relative;
+            border-radius: 10px 10px 0 0;
+            border-bottom: 5px solid var(--cyan);
+        }
+
+        .candle {
+            width: 8px;
+            height: 30px;
+            background: var(--accent);
+            position: absolute;
+            top: -30px;
+            cursor: pointer;
+        }
+
+        .flame {
+            width: 12px;
+            height: 18px;
+            background: radial-gradient(#fff, #ffaa00, transparent);
+            border-radius: 50%;
+            position: absolute;
+            top: -20px;
+            left: -2px;
+            box-shadow: 0 0 15px #ffaa00;
+            animation: flicker 0.1s infinite alternate;
+        }
+
+        .flame.off { display: none; }
+
+        @keyframes flicker {
+            from { transform: scale(1); }
+            to { transform: scale(1.1) rotate(2deg); }
+        }
+
+        /* --- NAVİQASİYA --- */
+        nav {
+            margin-top: 150px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--accent);
+            padding: 12px 25px;
+            cursor: pointer;
+            font-family: 'Syncopate';
+            font-size: 0.8rem;
+            transition: 0.3s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: var(--accent);
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        /* --- SƏHİFƏLƏR --- */
+        .page {
+            display: none;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 30px;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        .page.active { display: block; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message-box {
+            background: #0a0a0a;
+            border-left: 4px solid var(--cyan);
+            padding: 25px;
+            text-align: left;
+            margin: 20px 0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .media-content img, .media-content video {
+            width: 100%;
+            max-width: 500px;
+            border: 1px solid #333;
+            margin: 15px 0;
+        }
+
+        /* ATƏŞFƏŞANLIQ YAZISI */
+        #hbd-text {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: 'Syncopate';
+            font-size: 4rem;
+            color: var(--cyan);
+            z-index: 2000;
+            display: none;
+            text-shadow: 0 0 30px var(--cyan);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="hbd-text">HAPPY BIRTHDAY!</div>
+
+    <div id="cake-container">
+        <h3 style="font-family: 'Syncopate'; font-size: 0.8rem; color: var(--cyan);">Arzunu tut</h3>
+        <div class="cake-visual">
+            <div class="candle" style="left: 20%;" onclick="extinguish(this, event)"><div class="flame"></div></div>
+            <div class="candle" style="left: 50%;" onclick="extinguish(this, event)"><div class="flame"></div></div>
+            <div class="candle" style="left: 80%;" onclick="extinguish(this, event)"><div class="flame"></div></div>
+        </div>
+        <p id="hint" style="font-size: 0.7rem; opacity: 0.6;">Sürpriz üçün bütün şamları söndür...</p>
+    </div>
+
+    <header style="margin-top: 220px;">
+        <h1 style="font-family: 'Syncopate'; letter-spacing: 8px;">AD GUNUN MUBAREK HEYVA!</h1>
+        <p style="color: var(--accent); font-weight: bold;">[ SUBJECT:  ]</p>
+    </header>
+
+    <nav>
+        <button class="nav-btn active" onclick="openPage('home', this)">HOME</button>
+        <button class="nav-btn" onclick="openPage('meymun', this)">Ciyelek</button>
+        <button class="nav-btn" onclick="openPage('lalos', this)">MEYMUN</button>
+        <button class="nav-btn" onclick="openPage('heyva', this)">LALOS</button>
+    </nav>
+
+    <section id="home" class="page active">
+        <h2>// XOŞ GƏLDİN</h2>
+        <div class="message-box">
+            Bu arxiv sənin ən yaxın dostların tərəfindən kodlaşdırılıb. Hər bir faylda sənə aid özəl xatirələr və sözlər gizlənib. Yuxarıdakı menyudan keçid edərək onları oxuya bilərsən.
+        </div>
+        <img src="https://via.placeholder.com/600x300/111/cyan?text=BIRTHDAY+PHOTO" style="width: 100%; border: 1px solid var(--accent);">
+    </section>
+
+    <section id="meymun" class="page">
+        <h2 style="color: var(--accent);">FILE: MEYMUN_REPORT.EXE</h2>
+        <div class="message-box">
+            "Yaxşı ki doğulmusan, mənim dəli dostum! Səninlə olan hər an gülməli bir macəradır. Arzu edirəm ki, yeni yaşında bütün arzuların reallaşsın!"
+        </div>
+        <div class="media-content">
+            <p>[ MEDIA ATTACHMENT ]</p>
+            <img src="./project/assets/images/meymun1.jpg" alt="Meymun və Sən">
+            <video controls>
+                <source src="./project/assets/video/meymun_video.mp4" type="video/mp4">
+            </video>
+        </div>
+    </section>
+
+    <section id="lalos" class="page">
+        <h2 style="color: var(--accent);">FILE: LALOS_DATA.LOG</h2>
+        <div class="message-box">
+            "Happy Birthday! Sən tanıdığım ən səmimi insanlardan birisən. Həmişə belə pozitiv qal. Səni çox istəyirik! 🎂✨"
+        </div>
+        <div class="media-content">
+            <img src="./project/assets/images/lale.jpg" alt="Lale">
+        </div>
+    </section>
+
+    <section id="heyva" class="page">
+        <h2 style="color: var(--accent);">FILE: HEYVA_CONFIDENTIAL.DOC</h2>
+        <div class="message-box">
+            "Bəli bəli, sıra mənə gəldi! 🍓 9 aydır tanısaq da neçə ilin doğması kimiyik. Toyunda bütün krugu ortaya salıb vecerdəki kimi dağıdacıq! Yaxşı ki varsan."
+        </div>
+        <div class="media-content">
+            <video controls>
+                <source src="./project/assets/video/heyva_video.mp4" type="video/mp4">
+            </video>
+        </div>
+    </section>
+
+    <script>
+        // Səhifə yüklənəndə tortu endir
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('cake-container').classList.add('show');
+            }, 800);
+        });
+
+        let candlesOut = 0;
+        function extinguish(element, event) {
+            const flame = element.querySelector('.flame');
+            if (!flame.classList.contains('off')) {
+                flame.classList.add('off');
+                candlesOut++;
+            }
+
+            if (candlesOut === 3) {
+                launchCelebration();
+            }
+        }
+
+        function launchCelebration() {
+            // Tortu geri çək
+            document.getElementById('hint').innerText = "SYSTEM UNLOCKED!";
+            setTimeout(() => {
+                document.getElementById('cake-container').classList.remove('show');
+            }, 1000);
+
+            // "Happy Birthday" yazısını göstər
+            const hbdText = document.getElementById('hbd-text');
+            hbdText.style.display = 'block';
+
+            // Atəşfəşanlıq effekti
+            const duration = 5 * 1000;
+            const animationEnd = Date.now() + duration;
+
+            const frame = () => {
+                confetti({
+                    particleCount: 5,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#9d00ff', '#00d4ff', '#ffffff']
+                });
+                confetti({
+                    particleCount: 5,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#9d00ff', '#00d4ff', '#ffffff']
+                });
+
+                if (Date.now() < animationEnd) {
+                    requestAnimationFrame(frame);
+                }
+            };
+            frame();
+
+            // 4 saniyə sonra yazını gizlə
+            setTimeout(() => {
+                hbdText.style.fadeOut; 
+                hbdText.style.display = 'none';
+            }, 4000);
+        }
+
+        function openPage(pageId, btn) {
+            // Bütün səhifələri gizlə
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(p => p.classList.remove('active'));
+
+            // Bütün düymələri passiv et
+            const btns = document.querySelectorAll('.nav-btn');
+            btns.forEach(b => b.classList.remove('active'));
+
+            // Seçilən səhifəni və düyməni aktiv et
+            document.getElementById(pageId).classList.add('active');
+            btn.classList.add('active');
+
+            // Səhifəyə yumşaq keçid
+            window.scrollTo({ top: 300, behavior: 'smooth' });
+        }
+    </script>
+
+</body>
+</html>
