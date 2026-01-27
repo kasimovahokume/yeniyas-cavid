@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dostumuz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Dancing+Script:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #0a0a0c;
+            --accent: #ff007a;
+            --paper: #f4e4bc;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: linear-gradient(135deg, #0a0a0c 0%, #1a0a1a 50%, #0a0a1a 100%);
+            color: #4a3721;
+            font-family: 'Open Sans', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(white 1px, transparent 1px),
+                radial-gradient(white 1px, transparent 1px);
+            background-size: 50px 50px;
+            background-position: 0 0, 25px 25px;
+            opacity: 0.1; z-index: -1;
+        }
+
+        .nav { position: fixed; top: 0; width: 100%; z-index: 100; }
+        .nav-sc { 
+            display: flex; 
+            justify-content: space-evenly; 
+            align-items: center;
+            padding: 15px; 
+            background: rgba(0,0,0,0.8); 
+            backdrop-filter: blur(10px); 
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .nav-sc h2 { color: white; font-family: 'Montserrat'; }
+        .list-sc { display: flex; list-style: none; gap: 30px; }
+        .list-sc a { color: white; text-decoration: none; font-weight: bold; transition: 0.3s; font-size: 0.9rem; }
+        .list-sc a:hover { color: var(--accent); }
+        
+        /* BURAYA DİQQƏT: index.html-ə qayıdanda ?skipIntro=true göndəririk */
+        .back-link { color: var(--accent) !important; border: 1px solid var(--accent); padding: 5px 15px; border-radius: 20px; }
+
+        .content-wrapper {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 80px; 
+            width: 100%;
+        }
+
+        .paper-card {
+            background: var(--paper);
+            width: 90%;
+            max-width: 600px;
+            padding: 40px;
+            position: relative;
+            box-shadow: 20px 20px 50px rgba(0,0,0,0.5);
+            clip-path: polygon(2% 0%, 98% 2%, 100% 95%, 95% 100%, 0% 98%);
+            transform: translateY(100vh) rotate(-10deg);
+            animation: slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes slideUp {
+            to { transform: translateY(0) rotate(-2deg); }
+        }
+
+        .paper-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border: 2px dashed #d2b48c;
+            padding: 20px;
+        }
+
+        .paper-content img {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            aspect-ratio: 1/1;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 8px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: rotate(3deg);
+            margin-bottom: 20px;
+        }
+
+        .paper-content h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #2c1e12;
+        }
+
+        .paper-content p {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .pin {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle at 30% 30%, #ff007a, #990049);
+            border-radius: 50%;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        @media (max-width: 768px) {
+            .nav-sc h2 { font-size: 1.2rem; }
+            .list-sc { gap: 15px; }
+            .paper-content h1 { font-size: 2.2rem; }
+            .paper-content p { font-size: 1.2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="nav">
+        <div class="nav-sc">
+            <h2>Heyva</h2>
+            <ul class="list-sc">
+                <!-- skipIntro nişanı əlavə edildi -->
+                <li><a href="../../index.html?skipIntro=true" class="back-link">← Geri</a></li>
+                <li><a href="ciyelek.html">Çiyələk</a></li>
+                <li><a href="meymun.html">Meymun</a></li>
+                <li><a href="lalos.html">Lalos</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+        <div class="paper-card">
+            <div class="pin"></div>
+            <div class="paper-content">
+                <img src="../assets/images/cavid13.jpg" alt="Dostumuz">
+                <h1>Lalos</h1>
+                <p>
+                    "İndi sən geri qayıdanda tortu görməyəcəksən. Çünki menyudakı link artıq 'skipIntro' nişanı ilə qayıdır!"
+                </p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
