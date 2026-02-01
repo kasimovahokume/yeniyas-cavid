@@ -542,18 +542,39 @@
         
         /* Video Section */
         .video-section {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin: 50px 0;
-        }
-        .video-card {
-            background: var(--card-bg); padding: 15px; border-radius: 20px;
-            backdrop-filter: blur(10px);
-            transition: 0.4s;
-        }
-        .video-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 15px 40px rgba(255, 0, 122, 0.3);
-        }
-        video { width: 100%; border-radius: 10px; }
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 30px; 
+    margin: 50px 0;
+}
+.video-card {
+    background: var(--card-bg); 
+    padding: 15px; 
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    transition: 0.4s;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Videonu və yazını mərkəzləşdirir */
+}
+.video-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(255, 0, 122, 0.3);
+}
+/* Həm lokal video, həm də YouTube iframe üçün orta ölçülü tənzimləmə */
+.video-card video,
+.video-card iframe {
+    max-width: 400px; /* İstədiyiniz "normal orta boy" ölçüsü */
+    width: 100%;
+    border-radius: 10px;
+    display: block;
+    margin-bottom: 10px; /* Alt boşluq - yazı ilə məsafə */
+    max-height: 400px;
+}
+.video-card iframe {
+    aspect-ratio: 65/50; /* YouTube videosunun proporsiyasını qoruyur */
+    height: 700px; /* iframe-in hündürlüyünü avtomatik tənzimləyir */
+}
         
         /* Gallery Section */
         .gallery-section {
@@ -931,7 +952,9 @@
     </style>
 </head>
 <body>
-
+    <audio id="bgMusic" loop>
+        <source src="./project/assets/music/music/(1 Hour) Happy Birthday To You Acoustic Piano, Arranged by OliviaZzz (Happy Birthday To Everyone) [pd6DgbvUqBc].mp3" type="audio/mpeg">
+    </audio>
     <div id="intro-overlay">
         <div class="intro-bg"></div>
         <div class="balloon" style="top: 15%; left: 10%;">🎈</div>
@@ -988,12 +1011,12 @@
             <h2 class="section-title">📸 Xatirə Albomu</h2>
             <div class="gallery">
                 <div class="gallery-item">
-                    <img src="./project/assets/images/cavid6.jpg" alt="Xatirə 1">
-                    <div class="gallery-caption">Gülmə anlarımız</div>
+                    <img src="./project/assets/images/cavid2.jpg" alt="Xatirə 1">
+                    <div class="gallery-caption">biraz senden</div>
                 </div>
                 <div class="gallery-item">
                     <img src="./project/assets/images/cavid4.jpg" alt="Xatirə 2">
-                    <div class="gallery-caption">Tətil günlərimiz</div>
+                    <div class="gallery-caption"></div>
                 </div>
                 <div class="gallery-item">
                     <img src="./project/assets/images/cavid10.jpg" alt="Xatirə 3">
@@ -1001,51 +1024,57 @@
                 </div>
                 <div class="gallery-item">
                     <img src="./project/assets/images/cavid9.jpg" alt="Xatirə 4">
-                    <div class="gallery-caption">Xüsusi anlarımız</div>
+                    <div class="gallery-caption"></div>
                 </div>
                 <div class="gallery-item">
-                    <img src="./project/assets/images/cavid7.jpg" alt="Xatirə 5">
-                    <div class="gallery-caption">Gözəl günlərimiz</div>
+                    <img src="./project/assets/images/cavid17.jpg" alt="Xatirə 5">
+                    <div class="gallery-caption"></div>
                 </div>
                 <div class="gallery-item">
                     <img src="./project/assets/images/cavid5.jpg" alt="Xatirə 6">
                     <div class="gallery-caption">Biraz usaqliqdan</div>
                 </div>
+                <div class="gallery-item">
+                    <img src="./project/assets/images/cavid15.jpg" alt="Xatirə 6">
+                    <div class="gallery-caption"></div>
+                </div>
+                <div class="gallery-item">
+                    <img src="./project/assets/images/cavid7.jpg" alt="Xatirə 6">
+                    <div class="gallery-caption"></div>
+                </div>
             </div>
         </section>
 
         <section>
-            <h2 style="color: var(--accent);">🎥 Bizim Videolarımız</h2>
+            <h2 style="color: var(--accent);">🎥 Videolarımız</h2>
             <div class="video-section">
                 <div class="video-card">
-                    <video controls>
-                        <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                    <video controls >
+                        <source src="./project/assets/video/document_5474471341044307990.mp4" type="video/mp4">
                     </video>
-                    <p style="text-align: center;">O unudulmaz gün...</p>
+                    <p style="text-align: center;">O unudulmaz xatirelerimiz...</p>
                 </div>
                 <div class="video-card">
-                    <video controls>
-                        <source src="https://www.w3schools.com/html/movie.mp4" type="video/mp4">
-                    </video>
-                    <p style="text-align: center;">Əyləncəli anlar</p>
+                    <iframe width="820" height="515" src="https://www.youtube.com/embed/h6X1I-SEOMU?si=5Vkr-MyCmKKaswBI" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    <p style="text-align: center;">Balaca youtuberimiz</p>
                 </div>
             </div>
         </section>
 
         <section class="paper-section" id="letter">
             <div class="old-paper" onclick="revealMessage(this)">
-                <h2 id="click-me">Sənə bir məktub var... (Toxun) ✉️</h2>
+                <h2 id="click-me">(Toxun) ✉️</h2>
                 <div class="paper-content" id="paper-inner">
                     <div class="text-side">
-                        <h3>Əziz Dostum Heyva,</h3>
-                        <p>Bu gün sənin xüsusi günündür və mən səni sevdiyim üçün bu məktubu yazmaq istədim. Səninlə keçirdiyimiz hər an mənim üçün qiymətlidir.</p>
-                        <p>Sənin gülüşün otağı işıqlandırır, sənin yaxınlığın isə hər problemi həll edə biləcəyimə inam verir. Bu gün sənin üçün ən gözəl sürprizləri və arzuları diləyirəm.</p>
-                        <p>Uğurların, sevincinin və sevginin həmişə səninlə olsun! Sənə hər zaman dəstək olmağı və səninlə yeni xatirələr yaratmağı həvəslə gözləyirəm.</p>
-                        <p>Ad günün mübarək olsun, əziz dostum! 🎂🎁🎈</p>
+                        <h3>Əziz Heyva,</h3>
+                        <p>Heyvacim ümid edirem sayti beyenmişsendir.Artıq bir ildir ki, həyatımdasan və bu bir ilə o qədər gülüş, o qədər unudulmaz xatirə sığdırmışıq ki... İnan, bunları mənə heç bir B12 promlemide  unutdura bilməz!</p>
+                        <p>Həmişə belə pozitiv qal, ve uzundeki gulus hec vaxt sonmesin sene bu yarasir</p>
+                        <p>Arzu edirəm ki, yeni yaşında bütün uğurlar səni tapsın, bütün qapılar üzünə taybatay açılsın.Ümid edirem sayta her defe baxanda bizi xatirlayacaqsan..</p>
+                        <p>Yaxşı ki doğulmusan, yaxşı ki mənim dostumsan. Ad günün mübarək! 🎂🎁🎈</p>
                         <p style="text-align: right; margin-top: 20px; font-style: italic;">- Sənin dostun</p>
                     </div>
                     <div class="img-side">
-                        <img src="https://images.unsplash.com/photo-1514565131-fce0801e5785?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=600&q=80" alt="Bizim Şəkil">
+                        <img src="./project/assets/images/cavid16.webp" alt="Bizim Şəkil">
                     </div>
                 </div>
             </div>
@@ -1055,27 +1084,31 @@
     <script>
         // Music functionality
         const musicBtn = document.getElementById('music-btn');
-        let isMusicPlaying = false;
-        
-        // Note: Actual music would require a real audio file
-        // This is a placeholder for the functionality
-        musicBtn.addEventListener('click', () => {
-            isMusicPlaying = !isMusicPlaying;
-            musicBtn.classList.toggle('active', isMusicPlaying);
-            
-            if (isMusicPlaying) {
-                musicBtn.innerHTML = '<i class="fas fa-pause"></i>';
-                // In a real implementation, you would play audio here
-                console.log("Playing birthday music...");
+        const audio = document.getElementById('bgMusic');
+        const icon = musicBtn.querySelector('i');
+
+        function toggleMusic() {
+            if (audio.paused) {
+                audio.play();
+                musicBtn.classList.add('playing');
+                icon.classList.replace('fa-music', 'fa-pause');
             } else {
-                musicBtn.innerHTML = '<i class="fas fa-music"></i>';
-                // In a real implementation, you would pause audio here
-                console.log("Pausing birthday music...");
+                audio.pause();
+                musicBtn.classList.remove('playing');
+                icon.classList.replace('fa-pause', 'fa-music');
             }
-        });
-        
+        }
+
+        musicBtn.addEventListener('click', toggleMusic);
         // Navbar scroll effect
         window.addEventListener('scroll', () => {
+        const music = document.querySelector("#bgMusic");
+    if (music) {
+        music.volume = 0.3;
+        music.play().catch(error => {
+            console.log("Musiqi bloklandı:", error);
+        });
+    }
             const navbar = document.querySelector('.nav-sc');
             if (window.scrollY > 50) {
                 navbar.classList.add('scrolled');
@@ -1156,7 +1189,7 @@
                     // Add celebration text
                     setTimeout(() => {
                         const celebrationText = document.createElement('div');
-                        celebrationText.innerHTML = '🎉 Təbriklər! Bütün şamları söndürdün! 🎉';
+                        celebrationText.innerHTML = '🎉 Ad günün mübarək Cavid! 🎉';
                         celebrationText.style.position = 'absolute';
                         celebrationText.style.bottom = '120px';
                         celebrationText.style.left = '50%';

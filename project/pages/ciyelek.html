@@ -5,11 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dostumuz</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Dancing+Script:wght@700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             --bg: #0a0a0c;
             --accent: #ff007a;
             --paper: #f4e4bc;
+            --paper2: #e8d8a6;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -23,7 +25,9 @@
             flex-direction: column;
             align-items: center;
             overflow-x: hidden;
+            overflow-y: auto;
             position: relative;
+            padding-bottom: 40px;
         }
 
         body::before {
@@ -50,17 +54,61 @@
         .list-sc { display: flex; list-style: none; gap: 30px; }
         .list-sc a { color: white; text-decoration: none; font-weight: bold; transition: 0.3s; font-size: 0.9rem; }
         .list-sc a:hover { color: var(--accent); }
+
+        .music-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
         
-        /* BURAYA DİQQƏT: index.html-ə qayıdanda ?skipIntro=true göndəririk */
-        .back-link { color: var(--accent) !important; border: 1px solid var(--accent); padding: 5px 15px; border-radius: 20px; }
+        .music-btn:hover {
+            color: var(--accent);
+            transform: scale(1.1);
+        }
+        
+        .music-btn.active {
+            color: var(--accent);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        
+        .back-link { 
+            color: var(--accent) !important; 
+            border: 1px solid var(--accent); 
+            padding: 5px 15px; 
+            border-radius: 20px;
+            background: rgba(255, 0, 122, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            background: rgba(255, 0, 122, 0.2);
+            transform: scale(1.05);
+        }
 
         .content-wrapper {
             flex: 1;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding-top: 80px; 
+            justify-content: flex-start;
+            padding-top: 100px; 
             width: 100%;
+            gap: 60px;
         }
 
         .paper-card {
@@ -73,10 +121,23 @@
             clip-path: polygon(2% 0%, 98% 2%, 100% 95%, 95% 100%, 0% 98%);
             transform: translateY(100vh) rotate(-10deg);
             animation: slideUp 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            z-index: 10;
+        }
+        
+        .paper-card.second {
+            background: var(--paper2);
+            transform: translateY(120vh) rotate(8deg);
+            animation: slideUpSecond 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0.3s forwards;
+            margin-top: 20px;
+            z-index: 9;
         }
 
         @keyframes slideUp {
             to { transform: translateY(0) rotate(-2deg); }
+        }
+        
+        @keyframes slideUpSecond {
+            to { transform: translateY(0) rotate(2deg); }
         }
 
         .paper-content {
@@ -86,6 +147,20 @@
             text-align: center;
             border: 2px dashed #d2b48c;
             padding: 20px;
+            position: relative;
+            z-index: 5;
+        }
+        
+        .paper-content::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border: 1px solid rgba(0,0,0,0.1);
+            pointer-events: none;
+            z-index: -1;
         }
 
         .paper-content img {
@@ -99,19 +174,30 @@
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             transform: rotate(3deg);
             margin-bottom: 20px;
+            transition: transform 0.3s ease;
         }
-
+        
+        .paper-content img:hover {
+            transform: rotate(0deg) scale(1.02);
+        }
+        
         .paper-content h1 {
             font-family: 'Dancing Script', cursive;
             font-size: 3rem;
             margin-bottom: 15px;
             color: #2c1e12;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
         }
 
         .paper-content p {
             font-family: 'Dancing Script', cursive;
             font-size: 1.5rem;
             line-height: 1.6;
+            margin-top: 10px;
+        }
+        
+        .game-memory p {
+            font-size: 1.4rem;
         }
 
         .pin {
@@ -123,8 +209,52 @@
             height: 30px;
             background: radial-gradient(circle at 30% 30%, #ff007a, #990049);
             border-radius: 50%;
-            box-shadow: 2px 2px 5px rgba(0,0,0,0.5);
+            box-shadow: 
+                2px 2px 5px rgba(0,0,0,0.5),
+                0 0 8px rgba(255, 0, 122, 0.7);
             z-index: 10;
+            border: 2px solid #fff;
+        }
+        
+        .pin.second {
+            background: radial-gradient(circle at 30% 30%, #4da6ff, #0055cc);
+            box-shadow: 
+                2px 2px 5px rgba(0,0,0,0.5),
+                0 0 8px rgba(77, 166, 255, 0.7);
+        }
+        
+        .confetti {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: var(--accent);
+            border-radius: 0;
+            animation: fall linear forwards;
+        }
+        
+        @keyframes fall {
+            to { transform: translateY(100vh) rotate(360deg); }
+        }
+        
+        .signature {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            margin-top: 15px;
+            font-weight: bold;
+            color: #8b4513;
+            align-self: flex-end;
+            margin-right: 20px;
+        }
+        
+        .game-title {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin: 10px 0;
+            display: inline-block;
+            border: 1px dashed #ff007a;
+            font-size: 1.3rem;
         }
 
         @media (max-width: 768px) {
@@ -132,21 +262,53 @@
             .list-sc { gap: 15px; }
             .paper-content h1 { font-size: 2.2rem; }
             .paper-content p { font-size: 1.2rem; }
+            .content-wrapper {
+                padding-top: 90px;
+                gap: 40px;
+            }
+            .paper-card, .paper-card.second {
+                padding: 25px;
+                max-width: 95%;
+            }
+            .game-title {
+                font-size: 1.1rem;
+            }
+            .signature {
+                font-size: 1.5rem;
+                margin-right: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .paper-content h1 { font-size: 1.9rem; }
+            .paper-content p { font-size: 1.1rem; }
+            .game-title {
+                font-size: 1rem;
+            }
+            .nav-sc { padding: 10px; }
+            .list-sc { gap: 10px; }
+            .list-sc a { font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
-
+    <audio id="bgMusic" loop>
+        <source src="../assets/music/music/(1 Hour) Happy Birthday To You Acoustic Piano, Arranged by OliviaZzz (Happy Birthday To Everyone) [pd6DgbvUqBc].mp3" type="audio/mpeg">
+    </audio>
     <nav class="nav">
         <div class="nav-sc">
             <h2>Heyva</h2>
             <ul class="list-sc">
-                <!-- skipIntro nişanı əlavə edildi -->
                 <li><a href="../../index.html?skipIntro=true" class="back-link">← Geri</a></li>
                 <li><a href="ciyelek.html">Çiyələk</a></li>
                 <li><a href="meymun.html">Meymun</a></li>
                 <li><a href="lalos.html">Lalos</a></li>
             </ul>
+            <div class="nav-buttons">
+                    <button class="music-btn" id="music-btn" title="Musiqi">
+                        <i class="fas fa-music"></i>
+                    </button>
+                </div>
         </div>
     </nav>
 
@@ -157,11 +319,130 @@
                 <img src="../assets/images/cavid.jpg" alt="Dostumuz">
                 <h1>Çiyələk</h1>
                 <p>
-                    "İndi sən geri qayıdanda tortu görməyəcəksən. Çünki menyudakı link artıq 'skipIntro' nişanı ilə qayıdır!"
+                    "Tostcumm Ad günün mübarəkkk yeni yaşın uğurlu və düşərli olsun.Yeni yaşında ağıllanman diləyi ilə😉Yaxşı ki,bu kollec bizi birləşdirib,və belə əyləncəli,və dəyərli dost qazanmışam.Yaxşı dost tapmaq çətindi(Sənin kimi).Hər şey ürəyincə olsun,həmişə yanındayam.YAXŞI Kİ,DOĞULMUSAN YAXŞI Kİ VARSAN.SƏN MƏNİM HƏM TOSTUM HƏM DOSTUM HƏMDƏ KARDEŞİMSİN🤍"
                 </p>
+                <p>
+                    Həyat sənə nə yaşadırsa yaşatsın,nə çətinliklər gətirirsə gətirsin olduğun insan olmaqdan imtina eləmə.Özündən şübhə eləmə hər şeyin ən yaxşısına ən gözəlinə layiqsən.Həmişə dediyim kimi gülməyi bacardığın qədər ağlamağıda bacarmalısan bu səni zəif insan etmir,əksinə insan edir.Ümid edirəm bu il həmişə axtardığın sevgini taparsan və axıra kimi gedərsən sevginə layiq biri olar.Ad günün bir daha mübarək bundanda gözəl illərin olsun və olacaq💞
+                </p>
+            </div>
+        </div>
+        
+        <div class="paper-card second">
+            <div class="pin second"></div>
+            <div class="paper-content game-memory">
+                <img src="../assets/images/cavid14.jpg" alt="Roblox Xatirəmiz">
+                <h1>Roblox Xatirəsi</h1>
+                <div class="game-title">Şanslı Bır Bloğu Kır!</div>
+                <p>
+                    "Əziz heyvacım,birdə çilek adınnan təbrik eləmək istədim səni.Daha nice belə maraqlı,əyləncəli oyunlara.Həmişə belə enerjik və gülərüz qal heyvacık💞💞Çilekte seni çox isteyir ve heyvanı tebrik eleyir🤭Çilek farkı işte"
+                </p>
+                <p>
+                    Həqiqətən sizinlə yayda roblox oynadığım günlər ən maraqlı günlərimiydi ən çətin vaxtlarımıydı amma sayənizdə gülərək keçirdim nə qədər dalaşsaqda bir o qədər əyləncəli günlərimiz olurdu.Amma axırda yenədə heçnı olmamış kimi(roblox girək?)yazan bir Cavid olurdu.Normalda bura bu qədər uzun yazmazdım 00:00 da daha uzun yazmaq istəyirdim amma bu sayt əbədi qalacağı üçün dedim uzun və yadda qalan olsun.Heyvacım Ad gününü burdada bir daha təbrik edirəm😚🤍
+                </p>
+                <div class="signature">- Roblox Dostun</div>
             </div>
         </div>
     </div>
 
+    <script>
+         // Music functionality
+        const audio = document.getElementById('bgMusic');
+const musicBtn = document.getElementById('music-btn');
+
+// 1. Səhifə yüklənəndə musiqinin vəziyyətini bərpa et
+// Music functionality
+
+
+// Səs səviyyəsini aşağı sal (0.0 ilə 1.0 arası) - Məsələn: 0.3 (30% səs)
+audio.volume = 0.3; 
+
+// 1. Səhifə yüklənəndə musiqinin vəziyyətini bərpa et
+window.addEventListener('load', () => {
+    const musicTime = localStorage.getItem('musicTime');
+    const isPlaying = localStorage.getItem('musicPlaying') === 'true';
+
+    if (musicTime) {
+        audio.currentTime = musicTime;
+    }
+
+    if (isPlaying) {
+        // Brauzerlər avtomatik oxutmanı bloklaya bildiyi üçün play() sözünü istifadəçi klikinə bağlamaq daha etibarlıdır
+        audio.play().catch(() => {
+            console.log("Musiqi üçün klik gözlənilir.");
+            musicBtn.classList.add('pulse-animation'); 
+        });
+    }
+});
+
+// 2. Musiqi hər saniyə çalındıqca vaxtı yadda saxla
+audio.addEventListener('timeupdate', () => {
+    localStorage.setItem('musicTime', audio.currentTime);
+});
+
+// 3. Düyməyə basanda vəziyyəti yadda saxla
+musicBtn.addEventListener('click', () => {
+    if (audio.paused) {
+        audio.play();
+        musicBtn.innerHTML = '<i class="fas fa-music"></i>'; // Çalanda musiqi ikonu
+        localStorage.setItem('musicPlaying', 'true');
+    } else {
+        audio.pause();
+        musicBtn.innerHTML = '<i class="fas fa-volume-mute"></i>'; // Dayananda səssiz ikonu
+        localStorage.setItem('musicPlaying', 'false');
+    }
+});
+        // Create falling confetti effect
+        function createConfetti() {
+            const colors = ['#ff007a', '#4da6ff', '#ffd700', '#00ff9d', '#ff4d4d'];
+            const confettiCount = 50;
+            
+            for (let i = 0; i < confettiCount; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti');
+                
+                // Random properties
+                const size = Math.random() * 10 + 5;
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const left = Math.random() * 100;
+                const delay = Math.random() * 2;
+                const duration = Math.random() * 3 + 2;
+                
+                // Apply styles
+                confetti.style.width = `${size}px`;
+                confetti.style.height = `${size}px`;
+                confetti.style.backgroundColor = color;
+                confetti.style.left = `${left}%`;
+                confetti.style.top = '-20px';
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                confetti.style.animationDuration = `${duration}s`;
+                confetti.style.animationDelay = `${delay}s`;
+                confetti.style.zIndex = '5';
+                
+                // Add shape variation
+                if (Math.random() > 0.5) {
+                    confetti.style.borderRadius = '50%';
+                } else if (Math.random() > 0.7) {
+                    confetti.style.clipPath = 'polygon(50% 0%, 0% 100%, 100% 100%)';
+                }
+                
+                document.body.appendChild(confetti);
+                
+                // Remove confetti after animation
+                setTimeout(() => {
+                    confetti.remove();
+                }, (duration + delay) * 1000);
+            }
+        }
+        
+        // Create confetti when page loads
+        window.addEventListener('load', () => {
+            setTimeout(createConfetti, 500);
+            
+            // Create more confetti periodically
+            setInterval(createConfetti, 3000);
+        });
+    </script>
+
 </body>
 </html>
+
